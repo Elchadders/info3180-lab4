@@ -18,6 +18,21 @@ from werkzeug.utils import secure_filename
 def home():
     """Render website's home page."""
     return render_template('home.html')
+    
+
+@app.route('/filelisting')
+def filelistings():
+    filelist=[]
+    if not session.get('logged_in'):
+        abort(401)
+        
+    rootdir = os.getcwd()
+    print rootdir
+    for subdir, dirs, files in os.walk('rootdir' + './app/static/uploads'):
+        for file in files:
+            listings = os.path.join(subdir, file)
+            filelist += [listings]
+    return render_template('filelisting.html')
 
 
 @app.route('/about/')
@@ -30,7 +45,7 @@ def add_file():
     if not session.get('logged_in'):
         abort(401)
 
-    file_folder = ''
+    file_folder = app.config['UPLOAD_FOLDER']
 
     if request.method == 'POST':
         file = request.files['file']
